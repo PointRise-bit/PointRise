@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PointRise</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+body{
+  font-family: Arial;
+  background:#111;
+  color:white;
+  text-align:center;
+  padding:20px;
+}
+.box{
+  background:#1e1e1e;
+  padding:20px;
+  border-radius:10px;
+  max-width:400px;
+  margin:auto;
+}
+button{
+  padding:10px 15px;
+  margin-top:10px;
+  border:none;
+  border-radius:5px;
+  cursor:pointer;
+}
+.primary{ background:#00c853; color:white; }
+.secondary{ background:#2962ff; color:white; }
+input{
+  width:100%;
+  padding:8px;
+  margin-top:5px;
+  border-radius:5px;
+  border:none;
+}
+.task{
+  background:#222;
+  padding:15px;
+  margin-top:15px;
+  border-radius:8px;
+}
+</style>
+</head>
+
+<body>
+
+<h2>PointRise</h2>
+
+<div class="box" id="authBox">
+  <input type="email" id="email" placeholder="البريد الإلكتروني">
+  <input type="password" id="password" placeholder="كلمة المرور">
+  <button class="primary" onclick="signUp()">تسجيل</button>
+  <button class="secondary" onclick="login()">دخول</button>
+</div>
+
+<div class="box" id="dashboard" style="display:none;">
+  <h3>رصيدك: <span id="balance">0</span> $</h3>
+  <div id="tasks"></div>
+  <button onclick="logout()">خروج</button>
+</div>
+
+<script>
+
+const supabase = window.supabase.createClient(
+  "https://taadrcejkcihypaxukop.supabase.co",
+  "sb_publishable_RlSdbqzSzXy0kv49fr2S6A_Q-bDFRdu"
+);
+
+let currentUser = null;
+
+async function signUp(){
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
+
+  const {error} = await supabase.auth.signUp({email,password});
+  if(error) alert(error.message);
+  else alert("تم التسجيل، تحقق من بريدك");
+}
+
+async function login(){
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
+
+  const {data,error} = await supabase.auth.signInWithPassword({email,password});
+  if(error) alert(error.message);
+  else {
+    currentUser = data.user;
+    loadDashboard();
+  }
+}
+
+async function logout(){
+  await supabase.auth.signOut();
+  location.reload();
+}
+
+async function loadDashboard(){
+  document.getElementById("authBox").style.display="none";
+  document.getElementById("dashboard").style.display="block";
+
+  const {data:profile} = await supabase
+    .from("users_profile")
+    .select("*")
+    .eq("id", currentUser.id)
+    .single();
+
+  if(!profile){
+    await supabase.from("users_profile").insert({
+      id: currentUser.id,
+      balance: 0
+    });
+    document.getElementById("balance").innerText = "0";
+  }else{
+    document.getElementById("balance").innerText = profile.balance;
+  }
+
+  loadTasks();
+}
+
+async function loadTasks(){
+  const {data:tasks} = await supabase
+    .from("tasks")
+    .select("*")
+    .eq("active", true);
+
+  const container = document.getElementById("tasks");
+  container.innerHTML = "";
+
+  tasks.forEach(task=>{
+    container.innerHTML += `
+      <div class="task">
+        <h4>${task.title}</h4>
+        <p>${task.description}</p>
+        <p>الربح: ${task.reward}$</p>
+        <button onclick="openTask('${task.url}')">فتح المهمة</button>
+        <button onclick="completeTask('${task.id}',${task.reward})">تم التنفيذ</button>
+      </div>
+    `;
+  });
+}
+
+function openTask(url){
+  window.open(url,"_blank");
+}
+
+async function completeTask(taskId,reward){
+
+  await supabase.from("task_completions").insert({
+    user_id: currentUser.id,
+    task_id: taskId
+  });
+
+  const {data:profile} = await supabase
+    .from("users_profile")
+    .select("balance")
+    .eq("id", currentUser.id)
+    .single();
+
+  await supabase.from("users_profile")
+    .update({balance: profile.balance + reward})
+    .eq("id", currentUser.id);
+
+  alert("تم إضافة الربح");
+  loadDashboard();
+}
+
+</script>
+
+</body>
+</html>
