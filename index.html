@@ -9,166 +9,121 @@
 
 <style>
 body{
-  font-family: Arial;
-  background:#111;
-  color:white;
+  margin:0;
+  font-family:Arial;
+  background:#0f0f0f;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
+}
+
+.card{
+  background:#1c1c1c;
+  padding:30px;
+  width:350px;
+  border-radius:15px;
   text-align:center;
-  padding:20px;
+  box-shadow:0 0 20px rgba(0,0,0,0.5);
 }
-.box{
-  background:#1e1e1e;
-  padding:20px;
-  border-radius:10px;
-  max-width:400px;
-  margin:auto;
+
+h1{
+  color:white;
+  margin-bottom:25px;
 }
-button{
-  padding:10px 15px;
-  margin-top:10px;
-  border:none;
-  border-radius:5px;
-  cursor:pointer;
-}
-.primary{ background:#00c853; color:white; }
-.secondary{ background:#2962ff; color:white; }
+
 input{
   width:100%;
-  padding:8px;
-  margin-top:5px;
-  border-radius:5px;
-  border:none;
-}
-.task{
-  background:#222;
-  padding:15px;
-  margin-top:15px;
+  padding:12px;
+  margin:10px 0;
   border-radius:8px;
+  border:none;
+  font-size:16px;
+}
+
+button{
+  width:48%;
+  padding:12px;
+  margin-top:10px;
+  border:none;
+  border-radius:8px;
+  font-size:16px;
+  cursor:pointer;
+}
+
+.btn-register{
+  background:#16c60c;
+  color:white;
+}
+
+.btn-login{
+  background:#2979ff;
+  color:white;
+}
+
+.message{
+  margin-top:15px;
+  color:#00ffcc;
+  font-size:14px;
 }
 </style>
 </head>
 
 <body>
 
-<h2>PointRise</h2>
+<div class="card">
+<h1>PointRise</h1>
 
-<div class="box" id="authBox">
-  <input type="email" id="email" placeholder="البريد الإلكتروني">
-  <input type="password" id="password" placeholder="كلمة المرور">
-  <button class="primary" onclick="signUp()">تسجيل</button>
-  <button class="secondary" onclick="login()">دخول</button>
+<input type="email" id="email" placeholder="البريد الإلكتروني">
+<input type="password" id="password" placeholder="كلمة المرور">
+
+<div style="display:flex; justify-content:space-between;">
+<button class="btn-register" onclick="register()">تسجيل</button>
+<button class="btn-login" onclick="login()">دخول</button>
 </div>
 
-<div class="box" id="dashboard" style="display:none;">
-  <h3>رصيدك: <span id="balance">0</span> $</h3>
-  <div id="tasks"></div>
-  <button onclick="logout()">خروج</button>
+<div class="message" id="msg"></div>
+
 </div>
 
 <script>
+const supabaseUrl = "https://taadrcejkcihypaxukop.supabase.co";
+const supabaseKey = "sb_publishable_RlSdbqzSzXy0kv49fr2S6A_Q-bDFRdu";
+const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
-const supabase = window.supabase.createClient(
-  "https://taadrcejkcihypaxukop.supabase.co",
-  "sb_publishable_RlSdbqzSzXy0kv49fr2S6A_Q-bDFRdu"
-);
-
-let currentUser = null;
-
-async function signUp(){
+async function register(){
   const email = document.getElementById("email").value;
   const password = document.getElementById("password").value;
+  const msg = document.getElementById("msg");
 
-  const {error} = await supabase.auth.signUp({email,password});
-  if(error) alert(error.message);
-  else alert("تم التسجيل، تحقق من بريدك");
+  const { error } = await supabase.auth.signUp({
+    email: email,
+    password: password
+  });
+
+  if(error){
+    msg.innerText = "خطأ: " + error.message;
+  } else {
+    msg.innerText = "تم التسجيل بنجاح ✅";
+  }
 }
 
 async function login(){
   const email = document.getElementById("email").value;
   const password = document.getElementById("password").value;
+  const msg = document.getElementById("msg");
 
-  const {data,error} = await supabase.auth.signInWithPassword({email,password});
-  if(error) alert(error.message);
-  else {
-    currentUser = data.user;
-    loadDashboard();
-  }
-}
-
-async function logout(){
-  await supabase.auth.signOut();
-  location.reload();
-}
-
-async function loadDashboard(){
-  document.getElementById("authBox").style.display="none";
-  document.getElementById("dashboard").style.display="block";
-
-  const {data:profile} = await supabase
-    .from("users_profile")
-    .select("*")
-    .eq("id", currentUser.id)
-    .single();
-
-  if(!profile){
-    await supabase.from("users_profile").insert({
-      id: currentUser.id,
-      balance: 0
-    });
-    document.getElementById("balance").innerText = "0";
-  }else{
-    document.getElementById("balance").innerText = profile.balance;
-  }
-
-  loadTasks();
-}
-
-async function loadTasks(){
-  const {data:tasks} = await supabase
-    .from("tasks")
-    .select("*")
-    .eq("active", true);
-
-  const container = document.getElementById("tasks");
-  container.innerHTML = "";
-
-  tasks.forEach(task=>{
-    container.innerHTML += `
-      <div class="task">
-        <h4>${task.title}</h4>
-        <p>${task.description}</p>
-        <p>الربح: ${task.reward}$</p>
-        <button onclick="openTask('${task.url}')">فتح المهمة</button>
-        <button onclick="completeTask('${task.id}',${task.reward})">تم التنفيذ</button>
-      </div>
-    `;
-  });
-}
-
-function openTask(url){
-  window.open(url,"_blank");
-}
-
-async function completeTask(taskId,reward){
-
-  await supabase.from("task_completions").insert({
-    user_id: currentUser.id,
-    task_id: taskId
+  const { error } = await supabase.auth.signInWithPassword({
+    email: email,
+    password: password
   });
 
-  const {data:profile} = await supabase
-    .from("users_profile")
-    .select("balance")
-    .eq("id", currentUser.id)
-    .single();
-
-  await supabase.from("users_profile")
-    .update({balance: profile.balance + reward})
-    .eq("id", currentUser.id);
-
-  alert("تم إضافة الربح");
-  loadDashboard();
+  if(error){
+    msg.innerText = "خطأ: " + error.message;
+  } else {
+    msg.innerText = "تم تسجيل الدخول ✅";
+  }
 }
-
 </script>
 
 </body>
