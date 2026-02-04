@@ -6,60 +6,663 @@
   <title>PointRise</title>
   <style>
     :root{
-      --bg:#c9f6c8;
-      --card:rgba(255,255,255,.80);
-      --b:rgba(0,0,0,.08);
-      --txt:#0b1b12;
-      --mut:#426b52;
-      --brand:#0b7a3c;
-      --brand2:#1aa053;
-      --shadow:0 18px 40px rgba(0,0,0,.12);
-      --danger:#b91c1c;
+      --bg:#c9f7c9;       /* الأخضر الفاتح */
+      --card:#f5fff5;
+      --text:#0f2a12;     /* نص غامق واضح */
+      --muted:#2c5a35;
+      --brand:#0a7a2f;
+      --brand2:#1f6fff;
+      --danger:#d84a4a;
+      --shadow: 0 12px 30px rgba(0,0,0,.15);
+      --radius:20px;
     }
     *{box-sizing:border-box}
     body{
-      margin:0; padding:18px 12px 92px;
-      font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,"Noto Sans Arabic",sans-serif;
-      background:var(--bg); color:var(--txt);
-      display:flex; justify-content:center; min-height:100vh;
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans Arabic", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height:100vh;
     }
-    .app{width:min(520px,100%)}
-    .top{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:6px 6px 14px}
-    .brand{display:flex;align-items:center;gap:10px}
+    a{color:inherit}
+    .wrap{max-width:980px;margin:0 auto;padding:18px}
+    .topbar{
+      display:flex;align-items:center;justify-content:space-between;
+      gap:12px;margin-bottom:14px
+    }
+    .brand{
+      display:flex;align-items:center;gap:10px;
+      font-weight:800;font-size:24px;
+    }
     .logo{
-      width:44px;height:44px;border-radius:16px;
-      background:linear-gradient(135deg,var(--brand2),var(--brand));
-      box-shadow:0 14px 28px rgba(11,122,60,.22);
-      display:grid;place-items:center
+      width:42px;height:42px;border-radius:14px;
+      background: linear-gradient(135deg,#0a7a2f,#6cff9b);
+      box-shadow: var(--shadow);
+      position:relative;
     }
-    .logo:after{content:"";width:18px;height:18px;border-radius:6px;background:rgba(255,255,255,.88);transform:rotate(12deg)}
-    .brand h1{margin:0;font-size:22px;font-weight:950}
-    .chip{
+    .logo:after{
+      content:"";
+      position:absolute;inset:10px 12px 12px 10px;
+      border-radius:12px;
+      background:rgba(255,255,255,.85);
+      transform:rotate(10deg);
+    }
+    .lang{
       display:flex;align-items:center;gap:8px;
-      padding:8px 10px;border-radius:999px;
-      background:rgba(255,255,255,.65);
-      border:1px solid var(--b);
-      box-shadow:0 10px 22px rgba(0,0,0,.06);
-      cursor:pointer;user-select:none;
-      font-size:13px;color:var(--mut);
-      white-space:nowrap;text-decoration:none
+    }
+    .pill{
+      border:1px solid rgba(0,0,0,.12);
+      background: rgba(255,255,255,.6);
+      padding:10px 12px;border-radius:999px;
+      display:flex;align-items:center;gap:8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,.08);
+    }
+    select{
+      border:none;background:transparent;
+      font-size:14px;outline:none;color:var(--text);
     }
 
     .card{
-      background:var(--card);border:1px solid var(--b);
-      border-radius:22px;padding:14px;
-      box-shadow:var(--shadow);backdrop-filter:blur(8px)
+      background: var(--card);
+      border:1px solid rgba(0,0,0,.08);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
     }
 
-    /* === Slider === */
+    /* Slider */
     .slider{
       position:relative;
-      height:190px;
-      border-radius:18px;
+      height:210px;
+      background:#eaffea;
       overflow:hidden;
-      border:1px solid rgba(0,0,0,.10);
-      background:#fff;
-      box-shadow:0 14px 26px rgba(0,0,0,.08);
     }
-    .slides{display:flex;height:100%;transition:transform .45s ease}
-    .slide{min-width:100%;height:100%;
+    .slides{
+      display:flex;
+      height:100%;
+      width:300%;
+      transform: translateX(0);
+      transition: transform .6s ease;
+    }
+    .slide{
+      width:100%;
+      height:100%;
+      position:relative;
+      display:flex;align-items:flex-end;
+      padding:16px;
+      color:#ffffff;
+      font-weight:800;
+      letter-spacing:.2px;
+    }
+    .slide .caption{
+      background: rgba(0,0,0,.35);
+      padding:10px 12px;border-radius:14px;
+      backdrop-filter: blur(6px);
+      border:1px solid rgba(255,255,255,.25);
+    }
+    .s1{background:linear-gradient(135deg,#0b7a2f,#8dffb2)}
+    .s2{background:linear-gradient(135deg,#1f6fff,#87c7ff)}
+    .s3{background:linear-gradient(135deg,#2c2c2c,#6d6d6d)}
+    .dots{
+      position:absolute;left:12px;bottom:12px;
+      display:flex;gap:8px;
+      direction:ltr;
+    }
+    .dot{
+      width:10px;height:10px;border-radius:50%;
+      background: rgba(255,255,255,.5);
+      border:1px solid rgba(0,0,0,.15);
+      cursor:pointer;
+    }
+    .dot.active{background:#fff}
+
+    /* Main grid */
+    .content{padding:16px}
+    .grid{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:14px;
+    }
+    @media (min-width: 860px){
+      .grid{grid-template-columns: 1.1fr .9fr;}
+    }
+
+    .section{
+      background:rgba(255,255,255,.65);
+      border:1px solid rgba(0,0,0,.08);
+      border-radius: 18px;
+      padding:14px;
+    }
+    h2{margin:0 0 10px;font-size:18px}
+    p{margin:8px 0;color:var(--muted);line-height:1.5}
+
+    .row{display:flex;gap:10px;flex-wrap:wrap}
+    .btn{
+      border:none;cursor:pointer;
+      padding:12px 14px;border-radius:14px;
+      font-weight:800;
+      box-shadow: 0 10px 22px rgba(0,0,0,.14);
+      transition: transform .06s ease;
+    }
+    .btn:active{transform: translateY(1px)}
+    .btn.primary{background:var(--brand);color:#fff}
+    .btn.blue{background:var(--brand2);color:#fff}
+    .btn.ghost{background:#ffffff;color:var(--text);border:1px solid rgba(0,0,0,.12);box-shadow:none}
+
+    .field{
+      display:flex;flex-direction:column;gap:6px;margin:10px 0;
+    }
+    label{font-size:13px;color:var(--muted);font-weight:700}
+    input{
+      padding:12px 12px;border-radius:14px;
+      border:1px solid rgba(0,0,0,.14);
+      outline:none;background:#fff;
+      font-size:14px;color:var(--text);
+    }
+
+    .kpi{
+      display:grid;grid-template-columns: repeat(3, 1fr);gap:10px;
+    }
+    .kpi .box{
+      background:#ffffff;border:1px solid rgba(0,0,0,.08);
+      border-radius:16px;padding:10px;
+      text-align:center;
+    }
+    .kpi .n{font-weight:900;font-size:18px}
+    .kpi .t{font-size:12px;color:var(--muted);font-weight:700}
+
+    table{width:100%;border-collapse:collapse}
+    th,td{padding:10px;border-bottom:1px solid rgba(0,0,0,.08);font-size:13px}
+    th{text-align:right;color:var(--muted)}
+    .badge{
+      display:inline-block;padding:4px 8px;border-radius:999px;
+      font-size:12px;font-weight:800;
+      background:rgba(10,122,47,.12);
+      color:#0a7a2f;
+      border:1px solid rgba(10,122,47,.25);
+    }
+    .warn{
+      background: rgba(216,74,74,.10);
+      border: 1px solid rgba(216,74,74,.22);
+      color:#7c1f1f;
+      padding:10px;border-radius:14px;
+      font-weight:700;
+    }
+
+    /* Tabs (simple) */
+    .tabs{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 0}
+    .tab{padding:10px 12px;border-radius:999px;border:1px solid rgba(0,0,0,.12);background:#fff;cursor:pointer;font-weight:800}
+    .tab.active{background:rgba(10,122,47,.12);border-color:rgba(10,122,47,.25);color:#0a7a2f}
+    .hidden{display:none}
+
+    /* Footer */
+    .footer{
+      opacity:.8;
+      text-align:center;
+      padding:18px 0 6px;
+      font-size:12px;color:var(--muted);
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <div class="topbar">
+      <div class="brand">
+        <div class="logo" aria-hidden="true"></div>
+        <div>PointRise</div>
+      </div>
+
+      <div class="lang pill">
+        <span aria-hidden="true">🌐</span>
+        <select id="langSelect">
+          <option value="ar">العربية</option>
+          <option value="fr">Français</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="slider" id="slider">
+        <div class="slides" id="slides">
+          <div class="slide s1"><div class="caption" data-i18n="slide1">مهمّة يومية بسيطة • نقاط شفافة</div></div>
+          <div class="slide s2"><div class="caption" data-i18n="slide2">واجهة نظيفة • سجل عمليات واضح</div></div>
+          <div class="slide s3"><div class="caption" data-i18n="slide3">إيداع يدوي • إدارة من لوحة Admin</div></div>
+        </div>
+        <div class="dots" id="dots">
+          <div class="dot active" data-i="0"></div>
+          <div class="dot" data-i="1"></div>
+          <div class="dot" data-i="2"></div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="tabs">
+          <button class="tab active" data-view="home" data-i18n="tabHome">الرئيسية</button>
+          <button class="tab" data-view="auth" data-i18n="tabAuth">تسجيل / دخول</button>
+          <button class="tab" data-view="wallet" data-i18n="tabWallet">الإيداع</button>
+          <button class="tab" data-view="tasks" data-i18n="tabTasks">المهام</button>
+          <button class="tab" data-view="log" data-i18n="tabLog">سجل العمليات</button>
+        </div>
+
+        <!-- HOME -->
+        <div id="view-home" class="grid" style="margin-top:12px;">
+          <div class="section">
+            <h2 data-i18n="welcomeTitle">مرحبا بك في PointRise</h2>
+            <p data-i18n="welcomeText">
+              هذه واجهة جاهزة (Demo) تعرض: تسجيل/دخول، إيداع يدوي، مهمة يومية واحدة، وسجل عمليات.
+              يمكن تطويرها لاحقًا وربطها بقاعدة بيانات بطريقة شرعية.
+            </p>
+            <div class="warn" data-i18n="warnText">
+              تنبيه: لا تَعِد المستخدمين بأرباح “مضمونة”. اجعل النظام نقاط/مكافآت واضح وشفاف حسب خدمة حقيقية.
+            </div>
+
+            <div style="height:10px"></div>
+            <div class="kpi">
+              <div class="box"><div class="n" id="kpiBalance">0.00</div><div class="t" data-i18n="kpiBalance">الرصيد</div></div>
+              <div class="box"><div class="n" id="kpiLevel">VIP 1</div><div class="t" data-i18n="kpiLevel">المستوى</div></div>
+              <div class="box"><div class="n" id="kpiToday">0/1</div><div class="t" data-i18n="kpiToday">مهمة اليوم</div></div>
+            </div>
+
+            <div style="height:12px"></div>
+            <div class="row">
+              <button class="btn primary" data-nav="auth" data-i18n="goAuth">تسجيل / دخول</button>
+              <button class="btn blue" data-nav="wallet" data-i18n="goDeposit">الإيداع</button>
+              <button class="btn ghost" data-nav="tasks" data-i18n="goTask">المهمة اليومية</button>
+            </div>
+          </div>
+
+          <div class="section">
+            <h2 data-i18n="levelsTitle">المستويات (مثال)</h2>
+            <p data-i18n="levelsText">مهمة واحدة كل 24 ساعة. مدة المهمة = 30 ثانية. الأرقام أدناه أمثلة قابلة للتعديل.</p>
+            <table>
+              <thead>
+                <tr>
+                  <th data-i18n="colLevel">المستوى</th>
+                  <th data-i18n="colMin">حد أدنى</th>
+                  <th data-i18n="colReward">مكافأة المهمة</th>
+                  <th data-i18n="colTime">مدة</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td>VIP 1</td><td>10</td><td>0.20</td><td>30s</td></tr>
+                <tr><td>VIP 2</td><td>30</td><td>0.50</td><td>30s</td></tr>
+                <tr><td>VIP 3</td><td>60</td><td>1.00</td><td>30s</td></tr>
+                <tr><td>VIP 4</td><td>100</td><td>2.00</td><td>30s</td></tr>
+              </tbody>
+            </table>
+            <p style="font-size:12px" data-i18n="levelsNote">* هذا “عرض واجهة” فقط. ربط دفع/سحب حقيقي يحتاج نظام قانوني ومراجعة امتثال.</p>
+          </div>
+        </div>
+
+        <!-- AUTH -->
+        <div id="view-auth" class="hidden" style="margin-top:12px;">
+          <div class="section">
+            <h2 data-i18n="authTitle">تسجيل / دخول (Demo)</h2>
+            <p data-i18n="authText">هذا نموذج واجهة فقط. سيتم حفظ المستخدم محليًا داخل المتصفح (LocalStorage) للتجربة.</p>
+
+            <div class="grid">
+              <div class="section">
+                <h2 data-i18n="signup">تسجيل</h2>
+                <div class="field">
+                  <label data-i18n="email">البريد الإلكتروني</label>
+                  <input id="suEmail" type="email" placeholder="name@example.com">
+                </div>
+                <div class="field">
+                  <label data-i18n="password">كلمة المرور</label>
+                  <input id="suPass" type="password" placeholder="••••••••">
+                </div>
+                <button class="btn primary" id="btnSignup" data-i18n="btnSignup">تسجيل</button>
+              </div>
+
+              <div class="section">
+                <h2 data-i18n="login">دخول</h2>
+                <div class="field">
+                  <label data-i18n="email">البريد الإلكتروني</label>
+                  <input id="liEmail" type="email" placeholder="name@example.com">
+                </div>
+                <div class="field">
+                  <label data-i18n="password">كلمة المرور</label>
+                  <input id="liPass" type="password" placeholder="••••••••">
+                </div>
+                <button class="btn blue" id="btnLogin" data-i18n="btnLogin">دخول</button>
+                <button class="btn ghost" id="btnLogout" data-i18n="btnLogout" style="margin-right:8px">خروج</button>
+              </div>
+            </div>
+
+            <p id="authMsg" style="font-weight:800;margin-top:10px"></p>
+          </div>
+        </div>
+
+        <!-- WALLET / DEPOSIT -->
+        <div id="view-wallet" class="hidden" style="margin-top:12px;">
+          <div class="section">
+            <h2 data-i18n="depositTitle">الإيداع اليدوي (BEP20)</h2>
+            <p data-i18n="depositText">انسخ العنوان أدناه ثم أرسل TXID (رقم المعاملة) للإدارة ليتم تأكيد الإيداع يدويًا.</p>
+
+            <div class="section">
+              <h2 data-i18n="depositAddrTitle">عنوان الإيداع</h2>
+              <div class="pill" style="justify-content:space-between">
+                <span style="font-weight:900;direction:ltr" id="depositAddr">0xec92a420efe51e1482bff48b604827734d313fab</span>
+                <button class="btn ghost" id="copyAddr" style="padding:10px 12px" data-i18n="copy">نسخ</button>
+              </div>
+
+              <div class="row" style="margin-top:12px">
+                <div class="pill"><strong data-i18n="minDeposit">أقل إيداع:</strong>&nbsp;<span>10 USDT</span></div>
+                <div class="pill"><strong data-i18n="minWithdraw">أقل سحب:</strong>&nbsp;<span>10 USDT</span></div>
+              </div>
+            </div>
+
+            <div class="section">
+              <h2 data-i18n="submitTxTitle">إرسال TXID (Demo)</h2>
+              <div class="field">
+                <label data-i18n="amount">المبلغ</label>
+                <input id="txAmount" type="number" step="0.01" min="0" placeholder="10">
+              </div>
+              <div class="field">
+                <label data-i18n="txid">TXID (رقم المعاملة)</label>
+                <input id="txid" type="text" placeholder="0x...">
+              </div>
+              <button class="btn primary" id="btnSubmitTx" data-i18n="submit">إرسال</button>
+              <p id="txMsg" style="font-weight:800"></p>
+            </div>
+          </div>
+        </div>
+
+        <!-- TASKS -->
+        <div id="view-tasks" class="hidden" style="margin-top:12px;">
+          <div class="section">
+            <h2 data-i18n="taskTitle">المهمة اليومية (Demo)</h2>
+            <p data-i18n="taskText">مهمة واحدة كل 24 ساعة. اضغط “ابدأ” ثم انتظر 30 ثانية لإكمال المهمة.</p>
+
+            <div class="section">
+              <div class="row" style="justify-content:space-between;align-items:center">
+                <div>
+                  <div style="font-weight:900" data-i18n="taskName">مشاهدة محتوى لمدة 30 ثانية</div>
+                  <div style="color:var(--muted);font-weight:700" data-i18n="taskRule">يمكن إتمامها مرة واحدة يوميًا</div>
+                </div>
+                <span class="badge" id="taskRewardLabel">+0.50</span>
+              </div>
+
+              <div style="height:10px"></div>
+              <div class="row">
+                <button class="btn blue" id="btnStartTask" data-i18n="start">ابدأ</button>
+                <button class="btn ghost" id="btnResetDay" title="Demo only">Reset (Demo)</button>
+              </div>
+
+              <p id="taskMsg" style="font-weight:900"></p>
+            </div>
+          </div>
+        </div>
+
+        <!-- LOG -->
+        <div id="view-log" class="hidden" style="margin-top:12px;">
+          <div class="section">
+            <h2 data-i18n="logTitle">سجل العمليات (Demo)</h2>
+            <p data-i18n="logText">هنا تظهر عمليات: تسجيل، إرسال TXID، مكافأة مهمة… (محليًا داخل المتصفح).</p>
+            <div class="section" style="overflow:auto">
+              <table>
+                <thead>
+                  <tr>
+                    <th data-i18n="lType">النوع</th>
+                    <th data-i18n="lDetails">تفاصيل</th>
+                    <th data-i18n="lTime">الوقت</th>
+                  </tr>
+                </thead>
+                <tbody id="logBody"></tbody>
+              </table>
+            </div>
+            <button class="btn ghost" id="btnClearLog" data-i18n="clearLog">مسح السجل</button>
+          </div>
+        </div>
+
+        <div class="footer">
+          © <span id="year"></span> PointRise • Demo UI
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+  // ===== Helpers =====
+  const $ = (id)=>document.getElementById(id);
+  const LS = {
+    get(k, d){ try{ return JSON.parse(localStorage.getItem(k)) ?? d }catch{ return d } },
+    set(k, v){ localStorage.setItem(k, JSON.stringify(v)) }
+  };
+  const now = ()=> new Date().toLocaleString();
+
+  // ===== Demo State =====
+  const state = LS.get("pr_state", {
+    user: null,
+    balance: 0,
+    level: "VIP 2",
+    taskReward: 0.50,
+    lastTaskDay: null,
+    logs: []
+  });
+
+  function save(){ LS.set("pr_state", state); renderAll(); }
+  function log(type, details){
+    state.logs.unshift({type, details, time: now()});
+    save();
+  }
+
+  // ===== Slider =====
+  let si = 0;
+  const slides = $("slides");
+  const dots = Array.from(document.querySelectorAll(".dot"));
+  function setSlide(i){
+    si = i;
+    slides.style.transform = `translateX(${(document.documentElement.dir==="rtl" ? 1 : -1) * (i*100)}%)`;
+    dots.forEach(d=>d.classList.remove("active"));
+    dots[i].classList.add("active");
+  }
+  dots.forEach(d=>d.onclick=()=>setSlide(+d.dataset.i));
+  setInterval(()=>setSlide((si+1)%3), 4500);
+
+  // ===== Tabs / Views =====
+  const tabs = Array.from(document.querySelectorAll(".tab"));
+  const views = ["home","auth","wallet","tasks","log"];
+  function showView(name){
+    tabs.forEach(t=>t.classList.toggle("active", t.dataset.view===name));
+    views.forEach(v=>$("view-"+v).classList.toggle("hidden", v!==name));
+    window.scrollTo({top:0,behavior:"smooth"});
+  }
+  tabs.forEach(t=>t.onclick=()=>showView(t.dataset.view));
+  document.querySelectorAll("[data-nav]").forEach(b=>b.onclick=()=>showView(b.dataset.nav));
+
+  // ===== KPIs =====
+  function renderKPIs(){
+    $("kpiBalance").textContent = state.balance.toFixed(2);
+    $("kpiLevel").textContent = state.level;
+    const done = isTaskDoneToday() ? 1 : 0;
+    $("kpiToday").textContent = `${done}/1`;
+    $("taskRewardLabel").textContent = `+${state.taskReward.toFixed(2)}`;
+  }
+
+  // ===== Auth (Demo) =====
+  function setAuthMsg(msg, ok=true){
+    const el=$("authMsg");
+    el.textContent = msg;
+    el.style.color = ok ? "#0a7a2f" : "#7c1f1f";
+  }
+  $("btnSignup").onclick=()=>{
+    const e=$("suEmail").value.trim();
+    const p=$("suPass").value.trim();
+    if(!e || !p) return setAuthMsg("يرجى إدخال البريد وكلمة المرور.", false);
+    state.user = { email:e };
+    log("AUTH", "Signup: "+e);
+    setAuthMsg("تم التسجيل (Demo).");
+  };
+  $("btnLogin").onclick=()=>{
+    const e=$("liEmail").value.trim();
+    const p=$("liPass").value.trim();
+    if(!e || !p) return setAuthMsg("يرجى إدخال البريد وكلمة المرور.", false);
+    state.user = { email:e };
+    log("AUTH", "Login: "+e);
+    setAuthMsg("تم تسجيل الدخول (Demo).");
+  };
+  $("btnLogout").onclick=()=>{
+    if(state.user) log("AUTH", "Logout: "+state.user.email);
+    state.user=null;
+    setAuthMsg("تم تسجيل الخروج.", true);
+  };
+
+  // ===== Deposit (Manual / Demo) =====
+  $("copyAddr").onclick=async()=>{
+    const addr=$("depositAddr").textContent;
+    try{ await navigator.clipboard.writeText(addr); $("copyAddr").textContent="✓"; setTimeout(()=>$("copyAddr").textContent=(dict[curLang].copy),1200);}
+    catch{ alert(addr); }
+  };
+  function setTxMsg(msg, ok=true){
+    const el=$("txMsg");
+    el.textContent=msg;
+    el.style.color = ok ? "#0a7a2f" : "#7c1f1f";
+  }
+  $("btnSubmitTx").onclick=()=>{
+    if(!state.user) return setTxMsg("سجّل الدخول أولاً.", false);
+    const amt = parseFloat($("txAmount").value||"0");
+    const tx  = $("txid").value.trim();
+    if(!(amt>0) || !tx) return setTxMsg("أدخل مبلغ و TXID.", false);
+    log("DEPOSIT_TXID", `User ${state.user.email} sent ${amt} USDT | TXID: ${tx}`);
+    setTxMsg("تم إرسال الطلب (Demo). سيتم التحقق يدويًا.");
+    $("txAmount").value=""; $("txid").value="";
+  };
+
+  // ===== Task =====
+  function todayKey(){
+    const d=new Date();
+    return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+  }
+  function isTaskDoneToday(){
+    return state.lastTaskDay === todayKey();
+  }
+  function setTaskMsg(msg, ok=true){
+    const el=$("taskMsg");
+    el.textContent=msg;
+    el.style.color = ok ? "#0a7a2f" : "#7c1f1f";
+  }
+  $("btnStartTask").onclick=()=>{
+    if(!state.user) return setTaskMsg("سجّل الدخول أولاً.", false);
+    if(isTaskDoneToday()) return setTaskMsg("لقد أكملت مهمة اليوم بالفعل.", false);
+
+    $("btnStartTask").disabled=true;
+    let sec=30;
+    setTaskMsg("ابدأ العدّ التنازلي: 30 ثانية…");
+    const timer=setInterval(()=>{
+      sec--;
+      if(sec>0){
+        setTaskMsg(`جاري التنفيذ… بقي ${sec} ثانية`);
+      } else {
+        clearInterval(timer);
+        state.lastTaskDay = todayKey();
+        state.balance += state.taskReward;
+        log("TASK_REWARD", `+${state.taskReward.toFixed(2)} (Daily task)`);
+        setTaskMsg("تم إكمال المهمة وإضافة المكافأة (Demo).");
+        $("btnStartTask").disabled=false;
+      }
+      renderKPIs();
+    },1000);
+  };
+  $("btnResetDay").onclick=()=>{ state.lastTaskDay=null; setTaskMsg("Reset done (Demo)."); log("SYSTEM","Reset daily task (Demo)"); };
+
+  // ===== Log =====
+  function renderLog(){
+    const body=$("logBody");
+    body.innerHTML="";
+    (state.logs||[]).slice(0,50).forEach(r=>{
+      const tr=document.createElement("tr");
+      tr.innerHTML = `<td><span class="badge">${escapeHtml(r.type)}</span></td><td>${escapeHtml(r.details)}</td><td>${escapeHtml(r.time)}</td>`;
+      body.appendChild(tr);
+    });
+  }
+  $("btnClearLog").onclick=()=>{
+    state.logs=[];
+    log("SYSTEM","Log cleared");
+    save();
+  };
+
+  function escapeHtml(s){
+    return String(s).replace(/[&<>"']/g, m=>({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;" }[m]));
+  }
+
+  // ===== i18n (AR/FR) =====
+  const dict = {
+    ar:{
+      tabHome:"الرئيسية", tabAuth:"تسجيل / دخول", tabWallet:"الإيداع", tabTasks:"المهام", tabLog:"سجل العمليات",
+      slide1:"مهمّة يومية بسيطة • نقاط شفافة", slide2:"واجهة نظيفة • سجل عمليات واضح", slide3:"إيداع يدوي • إدارة من لوحة Admin",
+      welcomeTitle:"مرحبا بك في PointRise",
+      welcomeText:"هذه واجهة جاهزة (Demo) تعرض: تسجيل/دخول، إيداع يدوي، مهمة يومية واحدة، وسجل عمليات. يمكن تطويرها لاحقًا وربطها بقاعدة بيانات بطريقة شرعية.",
+      warnText:"تنبيه: لا تَعِد المستخدمين بأرباح “مضمونة”. اجعل النظام نقاط/مكافآت واضح وشفاف حسب خدمة حقيقية.",
+      kpiBalance:"الرصيد", kpiLevel:"المستوى", kpiToday:"مهمة اليوم",
+      goAuth:"تسجيل / دخول", goDeposit:"الإيداع", goTask:"المهمة اليومية",
+      levelsTitle:"المستويات (مثال)", levelsText:"مهمة واحدة كل 24 ساعة. مدة المهمة = 30 ثانية. الأرقام أدناه أمثلة قابلة للتعديل.",
+      colLevel:"المستوى", colMin:"حد أدنى", colReward:"مكافأة المهمة", colTime:"مدة",
+      levelsNote:"* هذا “عرض واجهة” فقط. ربط دفع/سحب حقيقي يحتاج نظام قانوني ومراجعة امتثال.",
+      authTitle:"تسجيل / دخول (Demo)", authText:"هذا نموذج واجهة فقط. سيتم حفظ المستخدم محليًا داخل المتصفح (LocalStorage) للتجربة.",
+      signup:"تسجيل", login:"دخول", email:"البريد الإلكتروني", password:"كلمة المرور",
+      btnSignup:"تسجيل", btnLogin:"دخول", btnLogout:"خروج",
+      depositTitle:"الإيداع اليدوي (BEP20)", depositText:"انسخ العنوان أدناه ثم أرسل TXID (رقم المعاملة) للإدارة ليتم تأكيد الإيداع يدويًا.",
+      depositAddrTitle:"عنوان الإيداع", copy:"نسخ", minDeposit:"أقل إيداع:", minWithdraw:"أقل سحب:",
+      submitTxTitle:"إرسال TXID (Demo)", amount:"المبلغ", txid:"TXID (رقم المعاملة)", submit:"إرسال",
+      taskTitle:"المهمة اليومية (Demo)", taskText:"مهمة واحدة كل 24 ساعة. اضغط “ابدأ” ثم انتظر 30 ثانية لإكمال المهمة.",
+      taskName:"مشاهدة محتوى لمدة 30 ثانية", taskRule:"يمكن إتمامها مرة واحدة يوميًا",
+      start:"ابدأ",
+      logTitle:"سجل العمليات (Demo)", logText:"هنا تظهر عمليات: تسجيل، إرسال TXID، مكافأة مهمة… (محليًا داخل المتصفح).",
+      lType:"النوع", lDetails:"تفاصيل", lTime:"الوقت", clearLog:"مسح السجل"
+    },
+    fr:{
+      tabHome:"Accueil", tabAuth:"Connexion / Inscription", tabWallet:"Dépôt", tabTasks:"Tâche", tabLog:"Historique",
+      slide1:"Une tâche quotidienne • Système clair", slide2:"Interface propre • Historique lisible", slide3:"Dépôt manuel • Gestion Admin",
+      welcomeTitle:"Bienvenue sur PointRise",
+      welcomeText:"Ceci est une interface (Démo) : inscription/connexion, dépôt manuel, une tâche quotidienne et historique. Vous pouvez la relier plus tard à une base de données légalement.",
+      warnText:"Attention : ne promettez pas des gains “garantis”. Utilisez un système de points/récompenses transparent basé sur un service réel.",
+      kpiBalance:"Solde", kpiLevel:"Niveau", kpiToday:"Tâche du jour",
+      goAuth:"Connexion / Inscription", goDeposit:"Dépôt", goTask:"Tâche quotidienne",
+      levelsTitle:"Niveaux (exemple)", levelsText:"Une tâche toutes les 24h. Durée = 30s. Les chiffres sont modifiables.",
+      colLevel:"Niveau", colMin:"Minimum", colReward:"Récompense", colTime:"Durée",
+      levelsNote:"* Démo UI فقط. Un vrai système paiement/retrait nécessite conformité légale.",
+      authTitle:"Connexion / Inscription (Démo)", authText:"UI فقط. L’utilisateur est stocké localement (LocalStorage) pour test.",
+      signup:"Inscription", login:"Connexion", email:"E-mail", password:"Mot de passe",
+      btnSignup:"S'inscrire", btnLogin:"Se connecter", btnLogout:"Déconnexion",
+      depositTitle:"Dépôt manuel (BEP20)", depositText:"Copiez l’adresse ثم envoyez TXID à l’admin pour validation manuelle.",
+      depositAddrTitle:"Adresse de dépôt", copy:"Copier", minDeposit:"Dépôt min :", minWithdraw:"Retrait min :",
+      submitTxTitle:"Envoyer TXID (Démo)", amount:"Montant", txid:"TXID", submit:"Envoyer",
+      taskTitle:"Tâche اليومية (Démo)", taskText:"Une tâche/24h. Cliquez “Démarrer” puis attendez 30 secondes.",
+      taskName:"Regarder un contenu 30 secondes", taskRule:"Une fois par jour",
+      start:"Démarrer",
+      logTitle:"Historique (Démo)", logText:"Connexion, TXID, récompense… (stocké localement).",
+      lType:"Type", lDetails:"Détails", lTime:"Heure", clearLog:"Effacer l'historique"
+    }
+  };
+
+  let curLang = "ar";
+  function applyLang(lang){
+    curLang = lang;
+    const isAr = lang==="ar";
+    document.documentElement.lang = isAr ? "ar" : "fr";
+    document.documentElement.dir  = isAr ? "rtl" : "ltr";
+    // Update texts
+    document.querySelectorAll("[data-i18n]").forEach(el=>{
+      const k = el.getAttribute("data-i18n");
+      if(dict[lang][k]) el.textContent = dict[lang][k];
+    });
+    // Re-apply slider direction fix
+    setSlide(si);
+    $("copyAddr").textContent = dict[curLang].copy;
+  }
+  $("langSelect").onchange=(e)=>applyLang(e.target.value);
+
+  // ===== Render all =====
+  function renderAll(){
+    $("year").textContent = new Date().getFullYear();
+    renderKPIs();
+    renderLog();
+  }
+  renderAll();
+  applyLang("ar");
+  showView("home");
+</script>
+</body>
+</html>
