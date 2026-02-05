@@ -250,11 +250,10 @@
           <div class="section">
             <h2 data-i18n="welcomeTitle">مرحبا بك في PointRise</h2>
             <p data-i18n="welcomeText">
-              هذه واجهة جاهزة (Demo) تعرض: تسجيل/دخول، إيداع يدوي، مهمة يومية واحدة، وسجل عمليات.
-              يمكن تطويرها لاحقًا وربطها بقاعدة بيانات بطريقة شرعية.
+    
             </p>
             <div class="warn" data-i18n="warnText">
-              تنبيه: لا تَعِد المستخدمين بأرباح “مضمونة”. اجعل النظام نقاط/مكافآت واضح وشفاف حسب خدمة حقيقية.
+        
             </div>
 
             <div style="height:10px"></div>
@@ -372,7 +371,7 @@
         <!-- TASKS -->
         <div id="view-tasks" class="hidden" style="margin-top:12px;">
           <div class="section">
-            <h2 data-i18n="taskTitle">المهمة اليومية (Demo)</h2>
+            <h2 data-i18n="taskTitle">المهمة اليوم)</h2>
             <p data-i18n="taskText">مهمة واحدة كل 24 ساعة. اضغط “ابدأ” ثم انتظر 30 ثانية لإكمال المهمة.</p>
 
             <div class="section">
@@ -509,7 +508,7 @@
     setAuthMsg("تم تسجيل الخروج.", true);
   };
 
-  // ===== Deposit (Manual / Demo) =====
+  // ===== Deposit (Manual / ) =====
   $("copyAddr").onclick=async()=>{
     const addr=$("depositAddr").textContent;
     try{ await navigator.clipboard.writeText(addr); $("copyAddr").textContent="✓"; setTimeout(()=>$("copyAddr").textContent=(dict[curLang].copy),1200);}
@@ -605,11 +604,11 @@
       btnSignup:"تسجيل", btnLogin:"دخول", btnLogout:"خروج",
       depositTitle:"الإيداع اليدوي (BEP20)", depositText:"انسخ العنوان أدناه ثم أرسل TXID (رقم المعاملة) للإدارة ليتم تأكيد الإيداع يدويًا.",
       depositAddrTitle:"عنوان الإيداع", copy:"نسخ", minDeposit:"أقل إيداع:", minWithdraw:"أقل سحب:",
-      submitTxTitle:"إرسال TXID (Demo)", amount:"المبلغ", txid:"TXID (رقم المعاملة)", submit:"إرسال",
-      taskTitle:"المهمة اليومية (Demo)", taskText:"مهمة واحدة كل 24 ساعة. اضغط “ابدأ” ثم انتظر 30 ثانية لإكمال المهمة.",
+      submitTxTitle:"إرسال TXID", amount:"المبلغ", txid:"TXID (رقم المعاملة)", submit:"إرسال",
+      taskTitle:"المهمة اليومية ", taskText:"مهمة واحدة كل 24 ساعة. اضغط “ابدأ” ثم انتظر 30 ثانية لإكمال المهمة.",
       taskName:"مشاهدة محتوى لمدة 30 ثانية", taskRule:"يمكن إتمامها مرة واحدة يوميًا",
       start:"ابدأ",
-      logTitle:"سجل العمليات (Demo)", logText:"هنا تظهر عمليات: تسجيل، إرسال TXID، مكافأة مهمة… (محليًا داخل المتصفح).",
+      logTitle:"سجل العمليات", logText:"هنا تظهر عمليات: تسجيل، إرسال TXID، مكافأة مهمة… (محليًا داخل المتصفح).",
       lType:"النوع", lDetails:"تفاصيل", lTime:"الوقت", clearLog:"مسح السجل"
     },
     fr:{
@@ -623,12 +622,12 @@
       levelsTitle:"Niveaux (exemple)", levelsText:"Une tâche toutes les 24h. Durée = 30s. Les chiffres sont modifiables.",
       colLevel:"Niveau", colMin:"Minimum", colReward:"Récompense", colTime:"Durée",
       levelsNote:"* Démo UI فقط. Un vrai système paiement/retrait nécessite conformité légale.",
-      authTitle:"Connexion / Inscription (Démo)", authText:"UI فقط. L’utilisateur est stocké localement (LocalStorage) pour test.",
+      authTitle:"Connexion / Inscription ", authText:"UI فقط. L’utilisateur est stocké localement (LocalStorage) pour test.",
       signup:"Inscription", login:"Connexion", email:"E-mail", password:"Mot de passe",
       btnSignup:"S'inscrire", btnLogin:"Se connecter", btnLogout:"Déconnexion",
       depositTitle:"Dépôt manuel (BEP20)", depositText:"Copiez l’adresse ثم envoyez TXID à l’admin pour validation manuelle.",
       depositAddrTitle:"Adresse de dépôt", copy:"Copier", minDeposit:"Dépôt min :", minWithdraw:"Retrait min :",
-      submitTxTitle:"Envoyer TXID (Démo)", amount:"Montant", txid:"TXID", submit:"Envoyer",
+      submitTxTitle:"Envoyer TXID ", amount:"Montant", txid:"TXID", submit:"Envoyer",
       taskTitle:"Tâche اليومية (Démo)", taskText:"Une tâche/24h. Cliquez “Démarrer” puis attendez 30 secondes.",
       taskName:"Regarder un contenu 30 secondes", taskRule:"Une fois par jour",
       start:"Démarrer",
