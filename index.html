@@ -665,3 +665,43 @@
 </script>
 </body>
 </html>
+<script>
+const msg = (t) => document.getElementById("msg").textContent = t;
+
+const supabase = window.supabase.createClient(
+  "ضع-ProjectURL-هنا",
+  "ضع-anon-هنا"
+);
+
+async function register(){
+  try{
+    msg("...جاري التسجيل");
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value.trim();
+
+    const { data, error } = await supabase.auth.signUp({ email, password });
+
+    if(error) return msg("خطأ التسجيل: " + error.message);
+
+    msg("✅ تم التسجيل. إذا التفعيل بالبريد ON لازم تفتح الإيميل وتفعّل الحساب.");
+  }catch(e){
+    msg("❌ خطأ غير متوقع: " + (e.message || e));
+  }
+}
+
+async function login(){
+  try{
+    msg("...جاري الدخول");
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value.trim();
+
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+
+    if(error) return msg("خطأ الدخول: " + error.message);
+
+    msg("✅ تم الدخول بنجاح");
+  }catch(e){
+    msg("❌ خطأ غير متوقع: " + (e.message || e));
+  }
+}
+</script>
