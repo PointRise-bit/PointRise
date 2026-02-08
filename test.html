@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="ar">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
+<body style="font-family:Arial;padding:20px">
+  <h3>اختبار Supabase Signup</h3>
+  <input id="email" placeholder="email" style="width:100%;padding:10px;margin:8px 0">
+  <input id="pass" placeholder="password" type="password" style="width:100%;padding:10px;margin:8px 0">
+  <button id="btn" style="width:100%;padding:12px">تسجيل</button>
+  <pre id="out" style="white-space:pre-wrap;background:#f5f5f5;padding:12px;margin-top:12px"></pre>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    const SUPABASE_URL = "https://taadrcejkcihypaxukop.supabase.co";
+    const SUPABASE_ANON_KEY = "ضع_anon_key_هنا_وليس_sb_publishable";
+
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    const out = document.getElementById("out");
+    document.getElementById("btn").onclick = async () => {
+      out.textContent = "جارٍ التسجيل...";
+      try {
+        const email = document.getElementById("email").value.trim();
+        const password = document.getElementById("pass").value;
+
+        const { data, error } = await supabase.auth.signUp({ email, password });
+        if (error) throw error;
+
+        out.textContent = "نجاح ✅\n" + JSON.stringify(data, null, 2);
+      } catch (e) {
+        out.textContent = "خطأ ❌\n" + (e?.message || String(e));
+      }
+    };
+  </script>
+</body>
+  </html>
